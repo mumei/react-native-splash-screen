@@ -1,6 +1,12 @@
 package com.cboy.rn.splashscreen;
+import android.animation.Animator;
 import android.app.Activity;
 import android.app.Dialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import com.facebook.react,ReactRootView;
 
 import java.lang.ref.WeakReference;
 /**
@@ -12,36 +18,28 @@ import java.lang.ref.WeakReference;
  * Email:crazycodeboy@gmail.com
  */
 public class SplashScreen {
-    private static Dialog mSplashDialog;
     private static WeakReference<Activity> mActivity;
+    private static FrameLayout rootView;
+    private static View splash;
 
     /**
      * 打开启动屏
      */
-    public static void show(final Activity activity,final boolean fullScreen) {
+    public static void show(final Activity activity,int layoutId) {
         if (activity == null) return;
+        if(layoutId == -1 && splash==null)return;
         mActivity = new WeakReference<Activity>(activity);
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (!activity.isFinishing()) {
+        rootView = (FrameLayout) activity.findViewById(android.R.id.content);
 
-                    mSplashDialog = new Dialog(activity,fullScreen? R.style.SplashScreen_Fullscreen:R.style.SplashScreen_SplashTheme);
-                    mSplashDialog.setContentView(R.layout.launch_screen);
-                    mSplashDialog.setCancelable(false);
+        if(splash == null){
+            LayoutInflater inflater = LayoutInflater.from(activity);
+            splash = inflater.inflate(layoutId,rootView,false);
+        }
 
-                    if (!mSplashDialog.isShowing()) {
-                        mSplashDialog.show();
-                    }
-                }
-            }
-        });
+        rootView.addView(splash,new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
     }
-    /**
-     * 打开启动屏
-     */
-    public static void show(final Activity activity) {
-        show(activity,false);
+    public static void show(final Activity activity){
+        show(activity,-1);
     }
 
     /**
@@ -54,9 +52,27 @@ public class SplashScreen {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mSplashDialog != null && mSplashDialog.isShowing()) {
-                    mSplashDialog.dismiss();
-                }
+                splash.animate().alpha(0).setDuration(500).setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        rootView.removeView(splash);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                }).start();
             }
         });
     }
