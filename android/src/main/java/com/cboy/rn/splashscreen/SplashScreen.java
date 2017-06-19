@@ -1,13 +1,11 @@
 package com.cboy.rn.splashscreen;
+
 import android.animation.Animator;
 import android.app.Activity;
-import android.app.Dialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import com.facebook.react,ReactRootView;
-
 import java.lang.ref.WeakReference;
 /**
  * SplashScreen
